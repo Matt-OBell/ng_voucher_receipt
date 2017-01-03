@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_purchase_receipt_form_inherit_account">
+            <field name="name">account.voucher.purchase.form.account</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_purchase_receipt_form"/>
+            <field name="arch" type="xml">
+                <!-- <xpath expr="//form/sheet/field[@name='account_id']" position="replace">
+                </xpath> -->
+                <xpath expr="//field[@name='account_id']" position="attributes">
+                    <attribute name="on_change">onchange_account(account_id)</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group[2]/field[@name='journal_id']" position="attributes">
+                    <attribute name="domain">[('type','in',['purchase','purchase_refund', 'cash', 'bank'])]</attribute>
+                </xpath>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="view_sale_receipt_form_account_domain">
+            <field name="name">account.voucher.purchase.form.account</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_sale_receipt_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group/group[2]/field[@name='journal_id']" position="attributes">
+                    <attribute name="domain">[('type','in',['sale','sale_refund', 'cash', 'bank'])]</attribute>
+                </xpath>
+            </field>
+        </record>     
+        
+        
+                   <!-- Sales Voucher complete override action to chagne domain with cash and bank too. -->
+        <record id="account_voucher.action_sale_receipt" model="ir.actions.act_window">
+            <field name="name">Sales Receipts</field>
+            <field name="res_model">account.voucher</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('journal_id.type','in',['sale','sale_refund', 'cash', 'bank']), ('type','=','sale')]</field>
+            <field name="context">{'default_type': 'sale', 'type': 'sale'}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="account_voucher.view_voucher_filter_sale"/>
+            <field name="target">current</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a sale receipt.
+              </p><p>
+                When the sale receipt is confirmed, you can record the customer
+                payment related to this sales receipt.
+              </p>
+            </field>
+        </record>
+        <record id="account_voucher.action_purchase_receipt" model="ir.actions.act_window">
+            <field name="name">Purchase Receipts</field>
+            <field name="res_model">account.voucher</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('journal_id.type','in',['purchase','purchase_refund', 'cash', 'bank']), ('type','=','purchase')]</field>
+            <field name="context">{'default_type': 'purchase', 'type': 'purchase'}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="account_voucher.view_voucher_filter_vendor"/>
+            <field name="target">current</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a purchase receipt. 
+              </p><p>
+                When the purchase receipt is confirmed, you can record the
+                supplier payment related to this purchase receipt.
+              </p>
+            </field>
+        </record>
+           
+    </data>
+</openerp>
